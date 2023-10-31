@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using CorgiTools.Core;
-using CorgiTools.Dog.Stats;
 using UnityEngine;
 
 namespace CorgiTools.UtilityAI

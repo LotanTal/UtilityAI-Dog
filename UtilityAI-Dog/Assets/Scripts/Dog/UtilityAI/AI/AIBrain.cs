@@ -1,12 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using CorgiTools.Core;
-
 
 namespace CorgiTools.UtilityAI
 {
-    using CorgiTools.Dog.Stats;
     using CorgiTools.DogControllers;
     public class AIBrain : MonoBehaviour
     {

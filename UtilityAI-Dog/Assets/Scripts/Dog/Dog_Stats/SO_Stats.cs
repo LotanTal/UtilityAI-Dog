@@ -1,14 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using CorgiTools.Core;
-using CorgiTools.UtilityAI;
 using SerializableDictionary.Scripts;
 using UnityEngine;
 namespace CorgiTools.Dog.Stats
 {
-    using CorgiTools.DogControllers;
-
     public abstract class SO_Stats : ScriptableObject
     {
 

@@ -1,13 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using CorgiTools.Core;
-using CorgiTools.DogControllers;
 using UnityEngine;
 
 namespace CorgiTools.UtilityAI
 {
     using CorgiTools.DogControllers;
-    using CorgiTools.Dog.Stats;
     public abstract class AIAction : ScriptableObject
     {
         public string Name;

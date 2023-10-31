@@ -1,12 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
 using CorgiTools.Dog.Stats;
 using CorgiTools.UtilityAI;
 using CorgiTools.Core;
 using UnityEngine;
-using CorgiTools;
-using Unity.VisualScripting;
-using System;
 
 namespace CorgiTools.DogControllers
 {
@@ -86,43 +82,29 @@ namespace CorgiTools.DogControllers
             billboard.UpdateStatsSlider(basicStat, value);
         }
 
-        #region Coroutine
+        // #region Coroutine
 
-        public void DoWork(int time)
-        {
-            StartCoroutine(workCoroutine(time));
-        }
-        public void DoSleep(int time)
-        {
-            StartCoroutine(sleepCoroutine(time));
-        }
 
-        IEnumerator workCoroutine(int time)
-        {
-            int counter = time;
-            while (counter > 0)
-            {
-                yield return new WaitForSeconds(1);
-                counter--;
-            }
 
-            Debug.Log("I AM WORKING!");
+        // public void PrintProgressBar(float value)
+        // {
+        //     // Normalize the value to be between 0 and 1
+        //     float percentage = Mathf.Clamp01(value / 100f);
 
-        }
-        IEnumerator sleepCoroutine(int time)
-        {
-            int counter = time;
-            while (counter > 0)
-            {
-                stats.basicStats.SetBasicStat(stats.basicStats.basicStatsDICT, BasicStatsEnum.Energy, 1);
-                yield return new WaitForSeconds(1);
-                counter--;
-            }
+        //     int totalBars = 50; // Total number of bars in the progress bar
+        //     int filledBars = Mathf.RoundToInt(percentage * totalBars); // Number of filled bars based on the percentage
 
-            Debug.Log("I just slept!");
-        }
+        //     // Create the filled and empty parts of the progress bar
+        //     string filledPart = new string('▇', filledBars);
+        //     string emptyPart = new string(' ', totalBars - filledBars);
 
-        #endregion
+        //     // Print the progress bar to the console
+        //     Debug.Log("|" + $"<color=cyan>{filledPart}</color>" + emptyPart + "| " + (percentage * 100).ToString("0.00") + "%");
+        // }
+
+
+
+        // #endregion
     }
 }
 

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using SerializableDictionary.Scripts;
 using UnityEngine;
 namespace CorgiTools.Dog.Stats

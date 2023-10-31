@@ -1,11 +1,6 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using CorgiTools.Core;
 using CorgiTools.Dog.Stats;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 
 namespace CorgiTools.DogControllers
 {
@@ -22,7 +17,7 @@ namespace CorgiTools.DogControllers
             dogNPC = npc;
             basicStats.InitBasicStats(basicStats);
             behavioralStats.InitBehavioralStats(behavioralStats);
-            StartCoroutine(UpdateEnergyStatsCoroutine()); // starts coroutine that update with time
+            StartCoroutine(UpdateEnergyStatsCoroutine()); // starts coroutine for the energy to drop every x seconds
             return this;
         }
 
@@ -35,6 +30,7 @@ namespace CorgiTools.DogControllers
         {
             while (true)
             {
+                // dogNPC.PrintProgressBar(basicStats.GetBasicStat(BasicStatsEnum.Energy, basicStats.basicStatsDICT));
                 yield return new WaitForSeconds(1f);
                 basicStats.SetBasicStat(basicStats.basicStatsDICT, BasicStatsEnum.Energy, -1);
             }

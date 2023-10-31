@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using SerializableDictionary.Scripts;
@@ -37,9 +36,5 @@ namespace CorgiTools.Core
             // Ensure the target value is reached.
             basicStatSliderDICT.Dictionary[basicStat].value = targetValue;
         }
-
     }
-
-
 }
-// basicStatsDICT.Dictionary[basicStat].text = $"{basicStat}: {value}";
