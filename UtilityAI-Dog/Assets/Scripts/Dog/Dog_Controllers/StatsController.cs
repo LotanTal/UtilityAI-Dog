@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
+using System.Threading.Tasks;
 using CorgiTools.Dog.Stats;
 using UnityEngine;
+using CorgiTools.Debugger;
 
 namespace CorgiTools.DogControllers
 {
@@ -12,28 +15,31 @@ namespace CorgiTools.DogControllers
 
 
         //sets the init stats for the dog, and updates the UI
-        public StatsController StatsInit(DogController npc)
+        public void StatsInit(DogController npc)
         {
             dogNPC = npc;
             basicStats.InitBasicStats(basicStats);
             behavioralStats.InitBehavioralStats(behavioralStats);
-            StartCoroutine(UpdateEnergyStatsCoroutine()); // starts coroutine for the energy to drop every x seconds
-            return this;
+            UpdateEnergyStats();
+        }
+
+        private async void UpdateEnergyStats()
+        {
+            await UpdateEnergyStatsAsync();
+        }
+
+        private async Task UpdateEnergyStatsAsync()
+        {
+            while (true)
+            {
+                await Awaitable.WaitForSecondsAsync(1f);
+                basicStats.SetBasicStat(basicStats.basicStatsDICT, BasicStatsEnum.Energy, -1);
+            }
         }
 
         private void UI_BasicStatChanged(BasicStatsEnum basicStat, float newValue) // an event that is called through SO_Stats "SetBasicStat"
         {
             dogNPC.UpdateBillboard(basicStat, newValue);
-        }
-
-        private IEnumerator UpdateEnergyStatsCoroutine()
-        {
-            while (true)
-            {
-                // dogNPC.PrintProgressBar(basicStats.GetBasicStat(BasicStatsEnum.Energy, basicStats.basicStatsDICT));
-                yield return new WaitForSeconds(1f);
-                basicStats.SetBasicStat(basicStats.basicStatsDICT, BasicStatsEnum.Energy, -1);
-            }
         }
 
         private void OnDisable()

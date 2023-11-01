@@ -23,7 +23,8 @@ namespace CorgiTools.DogControllers
         {
             mover = GetComponent<MoveController>();
             aiBrain = GetComponent<AIBrain>();
-            stats = GetComponent<StatsController>().StatsInit(this);
+            stats = GetComponent<StatsController>();
+            stats.StatsInit(this);
         }
 
         void Update()
@@ -71,7 +72,6 @@ namespace CorgiTools.DogControllers
             }
         }
 
-
         public void OnFinishedAction()
         {
             aiBrain.bestAction.OnFinishedAction(this);
@@ -81,30 +81,6 @@ namespace CorgiTools.DogControllers
         {
             billboard.UpdateStatsSlider(basicStat, value);
         }
-
-        // #region Coroutine
-
-
-
-        // public void PrintProgressBar(float value)
-        // {
-        //     // Normalize the value to be between 0 and 1
-        //     float percentage = Mathf.Clamp01(value / 100f);
-
-        //     int totalBars = 50; // Total number of bars in the progress bar
-        //     int filledBars = Mathf.RoundToInt(percentage * totalBars); // Number of filled bars based on the percentage
-
-        //     // Create the filled and empty parts of the progress bar
-        //     string filledPart = new string('▇', filledBars);
-        //     string emptyPart = new string(' ', totalBars - filledBars);
-
-        //     // Print the progress bar to the console
-        //     Debug.Log("|" + $"<color=cyan>{filledPart}</color>" + emptyPart + "| " + (percentage * 100).ToString("0.00") + "%");
-        // }
-
-
-
-        // #endregion
     }
 }
 
