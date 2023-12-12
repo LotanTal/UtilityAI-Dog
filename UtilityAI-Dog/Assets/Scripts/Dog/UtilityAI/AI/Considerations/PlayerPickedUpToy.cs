@@ -16,11 +16,11 @@ namespace CorgiTools.UtilityAI.Considerations
         {
             if (playerHasToy)
             {
-                score = 1;
+                score = 0;
             }
             else
             {
-                score = 0f;
+                score = 1f;
             }
             return score;
         }

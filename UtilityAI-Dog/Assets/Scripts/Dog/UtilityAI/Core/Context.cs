@@ -11,6 +11,7 @@ namespace CorgiTools.Core
         public GameObject dogToy;
         public GameObject ball;
         public GameObject player;
+        public Transform dogMouthTransform;
 
         public Dictionary<DestinationType, List<Transform>> Destinations { get; private set; }
 

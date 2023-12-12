@@ -3,10 +3,14 @@ using CorgiTools.Dog.Stats;
 using CorgiTools.UtilityAI;
 using CorgiTools.Core;
 using UnityEngine;
+using CorgiTools;
+using CorgiTools.CorgiEvents;
+using CorgiTools.UtilityAI.Actions;
+using CorgiTools.AnimationStates;
 
 namespace CorgiTools.DogControllers
 {
-    public enum State { decide, move, excute }
+    public enum State { Decide, Move, Execute }
     public class DogController : MonoBehaviour
     {
         public MoveController mover { get; set; }
@@ -16,59 +20,100 @@ namespace CorgiTools.DogControllers
         public Context context;
         public State currentState;
         public Billboard billboard;
+        private Vector3 lastDestination;
+        private AIAction lastAction;
 
 
-
-        void Start()
+        void Awake()
         {
             mover = GetComponent<MoveController>();
             aiBrain = GetComponent<AIBrain>();
             stats = GetComponent<StatsController>();
-            stats.StatsInit(this);
+            lastDestination = Vector3.positiveInfinity;
+            lastAction = null;
         }
 
         void Update()
         {
+            CheckForDestinationChange();
             FSMTick();
+        }
+
+        private void CheckForDestinationChange()
+        {
+            // Check if the destination has changed
+            if (aiBrain.bestAction != null &&
+                aiBrain.bestAction.RequiredDestination.position != lastDestination)
+            {
+                // Update lastDestination and reset the FSM to the Decide state
+                lastDestination = aiBrain.bestAction.RequiredDestination.position;
+                currentState = State.Decide;
+            }
         }
 
         public void FSMTick()
         {
             animationController.WalkingAnimation(this);
-
             switch (currentState)
             {
-                case State.decide:
-                    aiBrain.DecideBestAction();
-                    if (!mover.HasReachedDestination(this))
-                    {
-                        currentState = State.move;
-                        mover.MoveTo(aiBrain.bestAction.RequiredDestination.position, this); // Set destination once
-                    }
-                    else
-                    {
-                        currentState = State.excute;
-                    }
+                case State.Decide:
+                    DecideAction();
                     break;
 
-                case State.move:
-                    if (mover.HasReachedDestination(this))
-                    {
-                        currentState = State.excute;
-                    }
+                case State.Move:
+                    PerformMove();
                     break;
 
-                case State.excute:
-                    if (!aiBrain.finishedExcutingBestAction)
-                    {
-                        aiBrain.bestAction.ExecuteAction(this);
-                    }
-                    else
-                    {
-                        aiBrain.bestAction.hasExecuted = false;
-                        currentState = State.decide;
-                    }
+                case State.Execute:
+                    ExecuteAction();
                     break;
+            }
+        }
+
+        private void DecideAction()
+        {
+
+            aiBrain.DecideBestAction();
+
+            if (aiBrain.bestAction != null)
+            {
+                currentState = State.Move;
+                lastAction = aiBrain.bestAction;
+                lastDestination = aiBrain.bestAction.RequiredDestination.position;
+                mover.MoveTo(lastDestination, this); // Set destination once
+            }
+        }
+
+        private void PerformMove()
+        {
+
+            if (animationController.currentAnimationState != null)
+            {
+                animationController.currentAnimationState.AnimationStateDefualt(animationController);
+            }
+            if (mover.HasReachedDestination(this))
+            {
+                currentState = State.Execute;
+            }
+
+        }
+
+        private void ExecuteAction()
+        {
+            if (aiBrain.bestAction != lastAction)
+            {
+                currentState = State.Decide;
+                return;
+            }
+
+            if (!aiBrain.finishedExcutingBestAction)
+            {
+                aiBrain.bestAction.ExecuteAction(this);
+            }
+            else
+            {
+                aiBrain.bestAction.hasExecuted = false;
+                currentState = State.Decide;
             }
         }
 
@@ -76,11 +121,45 @@ namespace CorgiTools.DogControllers
         {
             aiBrain.bestAction.OnFinishedAction(this);
         }
-
-        public void UpdateBillboard(BasicStatsEnum basicStat, float value)
-        {
-            billboard.UpdateStatsSlider(basicStat, value);
-        }
     }
 }
 
+//             animationController.SetBoolAnimation("IsAllowedToPerform", false);
+
+
+// animationController.WalkingAnimation(this);
+
+// switch (currentState)
+// {
+//     case State.Decide:
+//         aiBrain.DecideBestAction();
+//         if (!mover.HasReachedDestination(this))
+//         {
+//             currentState = State.Move;
+//             mover.MoveTo(aiBrain.bestAction.RequiredDestination.position, this); // Set destination once
+//         }
+//         else
+//         {
+//             currentState = State.Excute;
+//         }
+//         break;
+
+//     case State.Move:
+//         if (mover.HasReachedDestination(this))
+//         {
+//             currentState = State.Excute;
+//         }
+//         break;
+
+//     case State.Excute:
+//         if (!aiBrain.finishedExcutingBestAction)
+//         {
+//             aiBrain.bestAction.ExecuteAction(this);
+//         }
+//         else
+//         {
+//             aiBrain.bestAction.hasExecuted = false;
+//             currentState = State.Decide;
+//         }
+//         break;
+// }

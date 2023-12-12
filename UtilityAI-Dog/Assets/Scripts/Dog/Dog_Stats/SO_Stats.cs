@@ -1,6 +1,7 @@
 using System;
 using SerializableDictionary.Scripts;
 using UnityEngine;
+using CorgiTools.CorgiEvents;
 namespace CorgiTools.Dog.Stats
 {
     public abstract class SO_Stats : ScriptableObject
@@ -9,8 +10,8 @@ namespace CorgiTools.Dog.Stats
         public float minValue = 0f;
         public float maxValue = 100f;
 
-        public delegate void BasicStatChangedUIHandler(BasicStatsEnum basicStat, float newValue);
-        public event BasicStatChangedUIHandler UI_OnBasicStatChanged;
+        // public delegate void BasicStatChangedUIHandler(BasicStatsEnum basicStat, float newValue);
+        // public event BasicStatChangedUIHandler UI_OnBasicStatChanged;
         public delegate void behavioralStatChangedUIHandler(BehavioralStatsEnum behavioralStat, float newValue);
         public event behavioralStatChangedUIHandler UI_OnBehavioralStatChanged;
 
@@ -54,7 +55,7 @@ namespace CorgiTools.Dog.Stats
                 float clampedValue = Mathf.Clamp(newValue, minValue, maxValue);
 
                 BasicStatDictionary.Dictionary[basicStat] = clampedValue;
-                UI_OnBasicStatChanged?.Invoke(basicStat, clampedValue); // update UI
+                EventBus<OnBasicStatsChangedEvent>.Raise(new OnBasicStatsChangedEvent(basicStat, clampedValue));
                 return clampedValue;
             }
             else
@@ -64,6 +65,8 @@ namespace CorgiTools.Dog.Stats
             }
         }
 
+        // UI_OnBasicStatChanged?.Invoke(basicStat, clampedValue); // update UI
+        // EventBus<UIEvent>.Raise(new UIEvent(basicStat,clampedValue))
 
         // behavioral stats get; set;
         public virtual float GetBehaviorStat(BehavioralStatsEnum behavioralStat, SerializableDictionary<BehavioralStatsEnum, float> behaviorStatDictionary)

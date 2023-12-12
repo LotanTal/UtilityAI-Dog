@@ -1,3 +1,5 @@
+using CorgiTools.CorgiEvents;
+using CorgiTools.DogControllers;
 using UnityEngine;
 using UnityEngine.Events;
 namespace CorgiTools.Player
@@ -15,7 +17,10 @@ namespace CorgiTools.Player
         public Transform player;
         float xRoation;
         float yRotation;
-        public UnityEvent ToyPickUpHandler;
+
+        public DogController dog;
+        // public GameObject dogRagdoll;
+
 
         void Start()
         {
@@ -47,6 +52,7 @@ namespace CorgiTools.Player
                     ThrowObject();
                 }
             }
+
         }
         void PickupObject()
         {
@@ -61,17 +67,13 @@ namespace CorgiTools.Player
                 Debug.Log("SphereCast hit: " + hit.collider.name);
 
                 Rigidbody hitObjectRb = hit.collider.gameObject.GetComponent<Rigidbody>();
-                if (hitObjectRb != null)
+                if (hitObjectRb != null && hit.collider.tag == "Toy")
                 {
                     currentObject = hitObjectRb;
                     currentObject.isKinematic = true;
                     currentObject.transform.SetPositionAndRotation(pickupPoint.position, pickupPoint.rotation);
                     currentObject.transform.parent = pickupPoint;
-                }
-
-                if (hit.collider.tag == "Toy")
-                {
-                    ToyPickUpHandler.Invoke();
+                    EventBus<PlayerPickedUpBall>.Raise(new PlayerPickedUpBall(dog));
                 }
             }
         }
@@ -82,15 +84,17 @@ namespace CorgiTools.Player
             if (currentObject != null)
             {
                 currentObject.transform.parent = null;
-                currentObject.useGravity = true;
                 currentObject.isKinematic = false;
+                // dogRagdoll.SetActive(true);
+                // dogRagdoll.GetComponent<Rigidbody>().AddForce(dogRagdoll.transform.forward * 200f, ForceMode.Impulse);
 
                 // Apply force to the object to throw it
                 currentObject.AddForce(pickupPoint.forward * throwForce, ForceMode.VelocityChange);
-
                 currentObject = null;
             }
         }
+
+
     }
 }
 

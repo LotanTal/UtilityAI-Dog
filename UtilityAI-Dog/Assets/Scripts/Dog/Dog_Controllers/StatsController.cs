@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CorgiTools.Dog.Stats;
 using UnityEngine;
 using CorgiTools.Debugger;
+using CorgiTools.CorgiEvents;
 
 namespace CorgiTools.DogControllers
 {
@@ -11,13 +12,10 @@ namespace CorgiTools.DogControllers
     {
         [SerializeField] public SO_BasicStats basicStats;
         [SerializeField] public SO_BehavioralStats behavioralStats;
-        private DogController dogNPC;
 
-
-        //sets the init stats for the dog, and updates the UI
-        public void StatsInit(DogController npc)
+        // sets the init stats for the dog, and updates the UI
+        private void Start()
         {
-            dogNPC = npc;
             basicStats.InitBasicStats(basicStats);
             behavioralStats.InitBehavioralStats(behavioralStats);
             UpdateEnergyStats();
@@ -37,18 +35,5 @@ namespace CorgiTools.DogControllers
             }
         }
 
-        private void UI_BasicStatChanged(BasicStatsEnum basicStat, float newValue) // an event that is called through SO_Stats "SetBasicStat"
-        {
-            dogNPC.UpdateBillboard(basicStat, newValue);
-        }
-
-        private void OnDisable()
-        {
-            basicStats.UI_OnBasicStatChanged -= UI_BasicStatChanged;
-        }
-        private void OnEnable()
-        {
-            basicStats.UI_OnBasicStatChanged += UI_BasicStatChanged;
-        }
     }
 }

@@ -2,7 +2,10 @@ using UnityEngine;
 
 namespace CorgiTools.UtilityAI
 {
+    using System.Collections.Generic;
     using CorgiTools.DogControllers;
+    using CorgiTools.AnimationStates;
+
     public abstract class AIAction : ScriptableObject
     {
         public string Name;
@@ -15,9 +18,12 @@ namespace CorgiTools.UtilityAI
         }
         public bool hasExecuted { get; set; }
 
-        public Consideration[] considerations;
+        public List<Consideration> considerations;
 
         public Transform RequiredDestination { get; protected set; }
+
+        public abstract AnimationState animationState { get; protected set; }
+
 
         public virtual void Awake()
         {
@@ -40,6 +46,16 @@ namespace CorgiTools.UtilityAI
         public virtual void AbortAction(DogController npc)
         {
             hasExecuted = false;
+            OnFinishedAction(npc);
+            if (npc.aiBrain.bestAction != null && State.Execute == npc.currentState)
+            {
+                npc.animationController.currentAnimationState.AnimationStateDefualt(npc.animationController);
+            }
+            if (State.Move == npc.currentState)
+            {
+                npc.currentState = State.Decide;
+            }
+
         }
 
         public virtual void OnFinishedAction(DogController npc)
@@ -47,8 +63,14 @@ namespace CorgiTools.UtilityAI
             npc.aiBrain.finishedExcutingBestAction = true;
         }
 
+        public virtual void SetAnimation(DogController npc)
+        {
+            npc.animationController.currentAnimationState = animationState;
+
+            animationState.SetAnimation(npc.animationController);
+        }
+
         // abstract methods
-        public abstract void SetAnimation(DogController npc); // make sure to use the correct string for the animation
         public abstract void AffectStats(DogController npc);
         public abstract void SetRequiredDestination(DogController npc); // sets the destination for the mover. the AI will move towards this destination BEFORE executing action
     }

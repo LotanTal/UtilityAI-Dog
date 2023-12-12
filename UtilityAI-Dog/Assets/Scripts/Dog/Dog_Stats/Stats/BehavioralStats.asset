@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 612774e047919dc4182ea933f1a14bde, type: 3}
   m_Name: BehavioralStats
   m_EditorClassIdentifier: 
+  minValue: 0
+  maxValue: 100
   behavioralStatsDICT:
     _pairs:
     - _key: 0
       _value: 0
     - _key: 1
-      _value: 0
+      _value: 60
     - _key: 2
       _value: 0
     - _key: 3
