@@ -24,7 +24,7 @@ namespace CorgiTools.UtilityAI.Actions
         public override void SetRequiredDestination(DogController npc)
         {
             RequiredDestination = npc.context.dogBed.transform;
-            npc.mover.destination = RequiredDestination;
+            // npc.mover.destination = RequiredDestination;
         }
     }
 }

@@ -14,6 +14,7 @@ namespace CorgiTools.AnimationStates
         public override void SetAnimation(AnimationController animationController)
         {
             animationController.SetBoolAnimation("Sit_b", true);
+            animationController.SetBoolAnimation("CanWalk", false);
         }
     }
 }

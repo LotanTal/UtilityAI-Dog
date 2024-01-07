@@ -52,8 +52,8 @@ namespace CorgiTools.DogControllers
 
         public void WalkingAnimation(DogController npc)
         {
-            // float desiredSpeed = npc.mover.agent.velocity.magnitude;
-            float desiredSpeed = npc.mover.agent.desiredVelocity.magnitude;
+            float desiredSpeed = npc.mover.agent.velocity.magnitude;
+            // float desiredSpeed = npc.mover.agent.desiredVelocity.magnitude;
             // Accelerate or decelerate smoothly
             if (currentSpeed < desiredSpeed)
             {
@@ -66,8 +66,6 @@ namespace CorgiTools.DogControllers
 
             // Clamp the current speed and set the walking animation
             currentSpeed = Mathf.Clamp(currentSpeed, 0, maxWalk);
-            Animator.SetFloat("Movement_f", currentSpeed);
-
             // Check if the agent is moving
             if (currentSpeed > 0.1f)
             {
@@ -85,7 +83,16 @@ namespace CorgiTools.DogControllers
                 // Smoothly interpolate back to 0
                 currentTurnAngle = Mathf.Lerp(currentTurnAngle, 0.01f, Time.deltaTime * decelleration);
             }
-            Animator.SetFloat("TurnAngle_f", currentTurnAngle);
+            if (Animator.GetBool("CanWalk") == false)
+            {
+                Animator.SetFloat("Movement_f", 0);
+                Animator.SetFloat("TurnAngle_f", 0);
+            }
+            else
+            {
+                Animator.SetFloat("Movement_f", currentSpeed);
+                Animator.SetFloat("TurnAngle_f", currentTurnAngle);
+            }
         }
 
         public void SetIKNeckRigWeight(int index, float weight)
@@ -94,7 +101,6 @@ namespace CorgiTools.DogControllers
             sourceObjects.SetWeight(index, weight);
             IKNeckRig.data.sourceObjects = sourceObjects;
         }
-
     }
 }
 

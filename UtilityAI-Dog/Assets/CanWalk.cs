@@ -1,14 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using CorgiTools.DogControllers;
-using CorgiTools.UtilityAI;
-using CorgiTools.UtilityAI.Actions;
 using UnityEngine;
-using CorgiTools;
 
-public class ToPlayReady : StateMachineBehaviour
+public class CanWalk : StateMachineBehaviour
 {
-
+    // public DogController dog;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     //{
@@ -24,20 +21,8 @@ public class ToPlayReady : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        var DogController = FindAnyObjectByType<DogController>();
-        Debug.Log("found character");
-
-        var playWithBall = FindAnyObjectByType<PlayWithBall>();
-        Debug.Log("found ball");
-
-        if (DogController.aiBrain.IsActionAvailable(playWithBall))
-        {
-            Debug.Log("found playwithball");
-            playWithBall.FetchBall(DogController, DogController.context.ball.GetComponent<Rigidbody>());
-            // DogController.animationController.Animator.StopPlayback();
-            Debug.Log("finished");
-        }
-
+        DogController dog = animator.GetComponentInParent<DogController>();
+        dog.animationController.SetBoolAnimation("CanWalk", true);
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

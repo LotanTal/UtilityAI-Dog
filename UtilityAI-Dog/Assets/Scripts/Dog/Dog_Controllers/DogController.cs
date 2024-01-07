@@ -21,6 +21,7 @@ namespace CorgiTools.DogControllers
         public State currentState;
         public Billboard billboard;
         private Vector3 lastDestination;
+        public Vector3 LastDestination { get { return lastDestination; } }
         private AIAction lastAction;
 
 
@@ -39,15 +40,18 @@ namespace CorgiTools.DogControllers
             FSMTick();
         }
 
+        private float stateChangeBufferTime = 0.5f; // Time buffer in seconds
+        private float lastStateChangeTime = 0f; // Time since the last state change
+
         private void CheckForDestinationChange()
         {
-            // Check if the destination has changed
             if (aiBrain.bestAction != null &&
-                aiBrain.bestAction.RequiredDestination.position != lastDestination)
+                aiBrain.bestAction.RequiredDestination.position != lastDestination &&
+                Time.time - lastStateChangeTime > stateChangeBufferTime)
             {
-                // Update lastDestination and reset the FSM to the Decide state
                 lastDestination = aiBrain.bestAction.RequiredDestination.position;
                 currentState = State.Decide;
+                lastStateChangeTime = Time.time; // Update the last state change time
             }
         }
 
@@ -75,21 +79,24 @@ namespace CorgiTools.DogControllers
 
             aiBrain.DecideBestAction();
 
-            if (aiBrain.bestAction != null)
+            if (aiBrain.bestAction != null)// && animationController.Animator.GetBool("CanWalk"))
             {
-                currentState = State.Move;
                 lastAction = aiBrain.bestAction;
                 lastDestination = aiBrain.bestAction.RequiredDestination.position;
-                mover.MoveTo(lastDestination, this); // Set destination once
+
+                currentState = State.Move;
             }
         }
 
         private void PerformMove()
         {
-
             if (animationController.currentAnimationState != null)
             {
                 animationController.currentAnimationState.AnimationStateDefualt(animationController);
+            }
+            if (animationController.Animator.GetBool("CanWalk"))
+            {
+                mover.MoveTo(lastDestination, this); // Set destination once
             }
             if (mover.HasReachedDestination(this))
             {

@@ -13,8 +13,7 @@ namespace CorgiTools.UtilityAI.Actions
     [CreateAssetMenu(fileName = "PlayWithBall", menuName = "UtilityAI/Actions/Play With Ball")]
     public class PlayWithBall : AIAction
     {
-        private bool pickedUpBall = false;
-        private Rigidbody ballRB;
+        private bool pickedUpBall;
         private AnimationStates.AnimationState _animationState = new AS_Sit();
         public override AnimationStates.AnimationState animationState
         {
@@ -25,7 +24,6 @@ namespace CorgiTools.UtilityAI.Actions
         public override void ExecuteAction(DogController npc)
         {
             base.ExecuteAction(npc);
-            ballRB = npc.context.ball.GetComponent<Rigidbody>();
         }
         public override void AffectStats(DogController npc)
         {
@@ -39,46 +37,65 @@ namespace CorgiTools.UtilityAI.Actions
             npc.animationController.SetIKNeckRigWeight(0, 1f);
 
             float distanceToPlayer = Vector3.Distance(npc.context.player.transform.position, npc.transform.position);
+            float distanceToBall = Vector3.Distance(npc.context.ball.transform.position, npc.transform.position);
 
-            if (distanceToPlayer < 3f)
+
+            // if (distanceToPlayer < 5f && !pickedUpBall)
+            // {
+            //     npc.animationController.currentAnimationState.SetAnimation(npc.animationController);
+            // }
+            npc.mover.agent.stoppingDistance = 1f;
+
+            if (pickedUpBall)
             {
-                npc.animationController.currentAnimationState.SetAnimation(npc.animationController);
+                npc.animationController.currentAnimationState.AnimationStateDefualt(npc.animationController);
+                DropBall(npc, npc.context.ball.GetComponent<Rigidbody>(), distanceToPlayer);
+
             }
             else
             {
-                npc.animationController.currentAnimationState.AnimationStateDefualt(npc.animationController);
-                npc.mover.agent.stoppingDistance = 1f;
+                // DropBall(npc, npc.context.ball.GetComponent<Rigidbody>(), distanceToPlayer);
+                npc.animationController.currentAnimationState.SetAnimation(npc.animationController);
+
+
             }
 
-            float distanceToBall = Vector3.Distance(npc.context.ball.transform.position, npc.transform.position);
 
             if (distanceToBall < 1f && !pickedUpBall)
             {
+
                 npc.animationController.Animator.Play("ToReady");
             }
-            if (distanceToPlayer < 3f && pickedUpBall)
+            // if (distanceToPlayer < 5f && pickedUpBall)
+            // {
+
+            // }
+        }
+
+        private void DropBall(DogController npc, Rigidbody ballRB, float distanceToPlayer)
+        {
+            npc.mover.agent.stoppingDistance = 2f;
+
+            if (distanceToPlayer < 5f)
             {
-                DropBall(npc);
+                pickedUpBall = false;
+                ballRB.isKinematic = false;
+                ballRB.AddForce(npc.context.dogMouthTransform.forward * 4f, ForceMode.Impulse);
+                npc.context.ball.transform.parent = null;
+
+                Debug.Log(pickedUpBall);
             }
         }
 
-        private void DropBall(DogController npc)
+        public void FetchBall(DogController npc, Rigidbody ballRB) // called in ToPlayReady : StateMachineBehaviour
         {
-            // ballRB = npc.context.ball.GetComponent<Rigidbody>();
-            ballRB.isKinematic = false;
-            ballRB.AddForce(npc.context.dogMouthTransform.forward * 4f, ForceMode.Impulse);
-            npc.context.ball.transform.parent = null;
-            pickedUpBall = false;
-        }
-
-        public void FetchBall(DogController npc) // called in ToPlayReady : StateMachineBehaviour
-        {
-            ballRB = npc.context.ball.GetComponent<Rigidbody>();
+            pickedUpBall = true;
             ballRB.isKinematic = true;
             npc.context.ball.transform.SetPositionAndRotation(npc.context.dogMouthTransform.position, npc.context.dogMouthTransform.rotation);
             npc.context.ball.transform.parent = npc.context.dogMouthTransform;
-            pickedUpBall = true;
-            npc.mover.agent.stoppingDistance = 2f;
+            // npc.mover.agent.stoppingDistance = 2f;
+
+            Debug.Log(pickedUpBall);
         }
 
         public override void SetRequiredDestination(DogController npc)

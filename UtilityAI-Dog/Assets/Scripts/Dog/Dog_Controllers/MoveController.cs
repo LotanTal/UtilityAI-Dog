@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -16,8 +17,14 @@ namespace CorgiTools.DogControllers
 
         public void MoveTo(Vector3 position, DogController npc)
         {
-            agent.destination = position;
-            agent.speed = speed;
+            // Vector3 _destination = npc.LastDestination;
+            if (npc.animationController.Animator.GetBool("CanWalk"))
+            {
+                agent.destination = npc.LastDestination;
+                agent.speed = speed;
+
+                // npc.animationController.WalkingAnimation(npc);
+            }
         }
 
         public bool HasReachedDestination(DogController npc)
